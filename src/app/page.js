@@ -1,10 +1,12 @@
 import React from 'react'
-import FinancialDashboard from './ejemplo/components/FinancialDashboard'
+import PrincicipalBody from  '@/components/PrincipalBody'
+import Brief1 from '@/components/Brief1'
 
 const page = () => {
   return (
     <div>
-      <FinancialDashboard/>
+      {/* <PrincicipalBody/> */}
+      <Brief1 />
     </div>
   )
 }
