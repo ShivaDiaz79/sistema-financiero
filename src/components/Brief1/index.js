@@ -1,5 +1,201 @@
-// import { db } from '@/utils/firebase';
-// import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
+// "use client";
+// import { useState, useEffect } from "react";
+// import { db } from "@/utils/firebase";
+// import {
+//   collection,
+//   addDoc,
+//   getDocs,
+//   deleteDoc,
+//   doc,
+//   serverTimestamp,
+//   updateDoc,
+// } from "firebase/firestore";
+// import jsPDF from "jspdf";
+// import "jspdf-autotable";
+
+// // const questionOptions = {
+// //   "¿Qué te motivó a iniciar este estudio ahora, en este momento de tu vida profesional?":
+// //     [
+// //       "Búsqueda de independencia profesional",
+// //       "Proyecto familiar o legado",
+// //       "Momento de madurez creativa",
+// //     ],
+// //   "¿Qué legado o aporte te gustaría dejar en el rubro de la arquitectura?": [
+// //     "Innovación y sostenibilidad",
+// //     "Transformación urbana",
+// //     "Impacto social positivo",
+// //   ],
+// //   "¿Cómo definirías tu mirada personal sobre la arquitectura?": [
+// //     "Humanista y centrada en el usuario",
+// //     "Funcional y eficiente",
+// //     "Poética y conceptual",
+// //   ],
+// //   "¿Qué cosas no querés repetir de otras experiencias o estructuras tradicionales?":
+// //     [
+// //       "Burocracia excesiva",
+// //       "Relaciones jerárquicas rígidas",
+// //       "Desconexión con el cliente",
+// //     ],
+// //   "¿Cómo te imaginás el estudio dentro de 5 años?": [
+// //     "Estudio consolidado con equipo multidisciplinario",
+// //     "Proyectos internacionales en curso",
+// //     "Influencia reconocida en la comunidad",
+// //   ],
+// //   "¿Qué servicios incluirá?": [
+// //     "Diseño arquitectónico",
+// //     "Consultoría y dirección de obra",
+// //     "Gestión de proyectos integrales",
+// //   ],
+// //   "¿Querés tener alianzas con profesionales de otras disciplinas?": [
+// //     "Sí, con diseñadores y urbanistas",
+// //     "Solo alianzas estratégicas puntuales",
+// //     "No, prefiero un equipo interno completo",
+// //   ],
+// //   "¿Hay servicios que querés evitar o que ya no te interesan ofrecer?": [
+// //     "Remodelaciones menores",
+// //     "Servicios técnicos sin diseño",
+// //     "Asesorías sin involucramiento creativo",
+// //   ],
+// //   "¿Cuáles son los 3 valores más importantes que deben guiar el estudio?": [
+// //     "Compromiso, innovación y ética",
+// //     "Empatía, sustentabilidad y estética",
+// //     "Transparencia, calidad y responsabilidad social",
+// //   ],
+// //   "¿Cuál es la relación ideal que te gustaría tener con los clientes?": [
+// //     "Colaborativa y horizontal",
+// //     "Basada en la confianza mutua",
+// //     "Didáctica y cercana",
+// //   ],
+// //   "¿Hay alguna corriente filosófica, cultural o espiritual que influya en tu forma de trabajar o diseñar?":
+// //     [
+// //       "Minimalismo japonés",
+// //       "Arquitectura bioclimática",
+// //       "Espiritualidad cristiana o ancestral",
+// //     ],
+// //   "¿Cómo definís el éxito de un proyecto, más allá del resultado estético?": [
+// //     "Satisfacción del cliente y del usuario",
+// //     "Impacto positivo en el entorno",
+// //     "Proceso armónico y eficiente",
+// //   ],
+// //   "¿Querés que el estudio tenga un nombre personal, conceptual o abstracto?": [
+// //     "Personal: ligado a mi nombre",
+// //     "Conceptual: ligado a una idea o valor",
+// //     "Abstracto: evocador y creativo",
+// //   ],
+// //   "¿Qué emoción o sensación te gustaría que el nombre genere en quien lo escucha?":
+// //     ["Inspiración", "Confianza", "Curiosidad"],
+// //   "¿Querés que la marca tenga una carga poética o sea más técnica y directa?": [
+// //     "Poética y artística",
+// //     "Técnica y precisa",
+// //     "Equilibrada entre ambas",
+// //   ],
+// //   "¿Cómo NO querés que sea la marca?": [
+// //     "Fría y corporativa",
+// //     "Superficial o sin profundidad",
+// //     "Demasiado rígida o formal",
+// //   ],
+// //   "¿Qué tipo de personas o empresas te gustaría que contraten al estudio?": [
+// //     "Personas comprometidas con el diseño",
+// //     "Empresas con visión de futuro",
+// //     "Clientes abiertos a la innovación",
+// //   ],
+// //   "¿Cuáles son los principales dolores o desafíos que enfrentan tus futuros clientes al encarar un proyecto arquitectónico?":
+// //     [
+// //       "Falta de visión clara",
+// //       "Presupuesto limitado",
+// //       "Miedo a lo nuevo o no tradicional",
+// //     ],
+// //   "¿Cómo te gustaría que se sintieran durante y después de trabajar con vos?": [
+// //     "Acompañados y entendidos",
+// //     "Inspirados y satisfechos",
+// //     "Confiados y tranquilos",
+// //   ],
+// //   "¿Qué tipo de clientes preferís evitar o rechazar?": [
+// //     "Desorganizados y sin compromiso",
+// //     "Autoritarios y cerrados al diálogo",
+// //     "Interesados solo en lo barato y rápido",
+// //   ],
+// //   "¿Qué sentís que vos o tu estudio van a ofrecer distinto a lo que ya hay en el mercado?":
+// //     [
+// //       "Mirada integral y personalizada",
+// //       "Procesos transparentes y colaborativos",
+// //       "Énfasis en diseño con propósito",
+// //     ],
+// //   "¿Qué cosas solés hacer diferente aunque el cliente no se entere?": [
+// //     "Documentación detallada y clara",
+// //     "Análisis profundo del contexto",
+// //     "Revisión constante con el equipo",
+// //   ],
+// //   "¿Qué estudios competidores admirás o con quiénes te gustaría compararte?": [
+// //     "Estudios de referencia ética y estética",
+// //     "Competidores con fuerte presencia internacional",
+// //     "Pequeños estudios con gran impacto",
+// //   ],
+// //   "¿Qué canales querés que tenga el estudio?": [
+// //     "Instagram y portafolio web",
+// //     "LinkedIn y medios especializados",
+// //     "Newsletter y YouTube educativo",
+// //   ],
+// //   "¿Qué tono de voz querés usar en la comunicación?": [
+// //     "Amable y profesional",
+// //     "Inspirador y empático",
+// //     "Directo pero cálido",
+// //   ],
+// //   "¿Qué tipo de contenido creés que podríamos generar?": [
+// //     "Detrás de escena del proceso",
+// //     "Contenido educativo y reflexivo",
+// //     "Galerías visuales del trabajo",
+// //   ],
+// //   "¿Qué frecuencia y estilo visual te gustaría tener en redes?": [
+// //     "2 veces por semana, estilo sobrio y elegante",
+// //     "Contenido mensual, estilo cálido y cercano",
+// //     "Estilo visual disruptivo y artístico",
+// //   ],
+// //   "En los próximos 6 a 12 meses, ¿qué te gustaría lograr?": [
+// //     "Lanzamiento oficial del estudio",
+// //     "Primeros clientes satisfechos",
+// //     "Portafolio sólido y coherente",
+// //   ],
+// //   "¿Qué obstáculos creés que tenemos que evitar desde el principio?": [
+// //     "Desorden interno y mala comunicación",
+// //     "Clientes sin afinidad con los valores del estudio",
+// //     "Promesas no cumplidas o expectativas desalineadas",
+// //   ],
+// //   "¿Tenés material ya desarrollado?": [
+// //     "Sí, tengo proyectos listos para mostrar",
+// //     "Solo bocetos e ideas iniciales",
+// //     "Nada aún, está en desarrollo",
+// //   ],
+// //   "¿Disponés de tiempo para grabar videos, hacer entrevistas o generar contenido con tu voz o rostro si es necesario?":
+// //     [
+// //       "Sí, estoy totalmente disponible",
+// //       "Puedo organizarme ocasionalmente",
+// //       "Prefiero delegarlo a otra persona",
+// //     ],
+// //   "¿Hay alguien más que vaya a participar en decisiones de marca o contenido?":
+// //     [
+// //       "Sí, familiares o socios estratégicos",
+// //       "Solo yo decido todo",
+// //       "Dependiendo del área, se consulta a otros",
+// //     ],
+// //   "Compartinos cuentas, sitios o imágenes que te inspiran.": [
+// //     "Estudios de arquitectura internacionales",
+// //     "Referentes de arte y diseño visual",
+// //     "Proyectos locales con impacto social",
+// //   ],
+// //   "¿Tenés una paleta de colores o estilo gráfico que ya uses o te guste?": [
+// //     "Sí, definida y en uso",
+// //     "Estoy buscando una identidad visual",
+// //     "No tengo nada definido todavía",
+// //   ],
+// //   "¿Cómo te imaginás que debería sentirse el sitio web al navegarlo?": [
+// //     "Limpio y fácil de usar",
+// //     "Inspirador y sensorial",
+// //     "Rico en contenido y referencias",
+// //   ],
+// // };
+
+
 "use client";
 import { useState, useEffect } from "react";
 import { db } from "@/utils/firebase";
@@ -13,185 +209,328 @@ import {
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
+// const questionOptions = {
+//   "¿Qué te motivó a iniciar este estudio ahora, en este momento de tu vida profesional?":
+//     [
+//       "Búsqueda de independencia profesional",
+//       "Proyecto familiar o legado",
+//       "Momento de madurez creativa",
+//     ],
+//   "¿Qué legado o aporte te gustaría dejar en el rubro de la arquitectura?": [
+//     "Innovación y sostenibilidad",
+//     "Transformación urbana",
+//     "Impacto social positivo",
+//   ],
+//   "¿Cómo definirías tu mirada personal sobre la arquitectura?": [
+//     "Humanista y centrada en el usuario",
+//     "Funcional y eficiente",
+//     "Poética y conceptual",
+//   ],
+//   "¿Qué cosas no querés repetir de otras experiencias o estructuras tradicionales?":
+//     [
+//       "Burocracia excesiva",
+//       "Relaciones jerárquicas rígidas",
+//       "Desconexión con el cliente",
+//     ],
+//   "¿Cómo te imaginás el estudio dentro de 5 años?": [
+//     "Estudio consolidado con equipo multidisciplinario",
+//     "Proyectos internacionales en curso",
+//     "Influencia reconocida en la comunidad",
+//   ],
+//   "¿Qué servicios incluirá?": [
+//     "Diseño arquitectónico",
+//     "Consultoría y dirección de obra",
+//     "Gestión de proyectos integrales",
+//   ],
+//   "¿Querés tener alianzas con profesionales de otras disciplinas?": [
+//     "Sí, con diseñadores y urbanistas",
+//     "Solo alianzas estratégicas puntuales",
+//     "No, prefiero un equipo interno completo",
+//   ],
+//   "¿Hay servicios que querés evitar o que ya no te interesan ofrecer?": [
+//     "Remodelaciones menores",
+//     "Servicios técnicos sin diseño",
+//     "Asesorías sin involucramiento creativo",
+//   ],
+//   "¿Cuáles son los 3 valores más importantes que deben guiar el estudio?": [
+//     "Compromiso, innovación y ética",
+//     "Empatía, sustentabilidad y estética",
+//     "Transparencia, calidad y responsabilidad social",
+//   ],
+//   "¿Cuál es la relación ideal que te gustaría tener con los clientes?": [
+//     "Colaborativa y horizontal",
+//     "Basada en la confianza mutua",
+//     "Didáctica y cercana",
+//   ],
+//   "¿Hay alguna corriente filosófica, cultural o espiritual que influya en tu forma de trabajar o diseñar?":
+//     [
+//       "Minimalismo japonés",
+//       "Arquitectura bioclimática",
+//       "Espiritualidad cristiana o ancestral",
+//     ],
+//   "¿Cómo definís el éxito de un proyecto, más allá del resultado estético?": [
+//     "Satisfacción del cliente y del usuario",
+//     "Impacto positivo en el entorno",
+//     "Proceso armónico y eficiente",
+//   ],
+//   "¿Querés que el estudio tenga un nombre personal, conceptual o abstracto?": [
+//     "Personal: ligado a mi nombre",
+//     "Conceptual: ligado a una idea o valor",
+//     "Abstracto: evocador y creativo",
+//   ],
+//   "¿Qué emoción o sensación te gustaría que el nombre genere en quien lo escucha?":
+//     ["Inspiración", "Confianza", "Curiosidad"],
+//   "¿Querés que la marca tenga una carga poética o sea más técnica y directa?": [
+//     "Poética y artística",
+//     "Técnica y precisa",
+//     "Equilibrada entre ambas",
+//   ],
+//   "¿Cómo NO querés que sea la marca?": [
+//     "Fría y corporativa",
+//     "Superficial o sin profundidad",
+//     "Demasiado rígida o formal",
+//   ],
+//   "¿Qué tipo de personas o empresas te gustaría que contraten al estudio?": [
+//     "Personas comprometidas con el diseño",
+//     "Empresas con visión de futuro",
+//     "Clientes abiertos a la innovación",
+//   ],
+//   "¿Cuáles son los principales dolores o desafíos que enfrentan tus futuros clientes al encarar un proyecto arquitectónico?":
+//     [
+//       "Falta de visión clara",
+//       "Presupuesto limitado",
+//       "Miedo a lo nuevo o no tradicional",
+//     ],
+//   "¿Cómo te gustaría que se sintieran durante y después de trabajar con vos?": [
+//     "Acompañados y entendidos",
+//     "Inspirados y satisfechos",
+//     "Confiados y tranquilos",
+//   ],
+//   "¿Qué tipo de clientes preferís evitar o rechazar?": [
+//     "Desorganizados y sin compromiso",
+//     "Autoritarios y cerrados al diálogo",
+//     "Interesados solo en lo barato y rápido",
+//   ],
+//   "¿Qué sentís que vos o tu estudio van a ofrecer distinto a lo que ya hay en el mercado?":
+//     [
+//       "Mirada integral y personalizada",
+//       "Procesos transparentes y colaborativos",
+//       "Énfasis en diseño con propósito",
+//     ],
+//   "¿Qué cosas solés hacer diferente aunque el cliente no se entere?": [
+//     "Documentación detallada y clara",
+//     "Análisis profundo del contexto",
+//     "Revisión constante con el equipo",
+//   ],
+//   "¿Qué estudios competidores admirás o con quiénes te gustaría compararte?": [
+//     "Estudios de referencia ética y estética",
+//     "Competidores con fuerte presencia internacional",
+//     "Pequeños estudios con gran impacto",
+//   ],
+//   "¿Qué canales querés que tenga el estudio?": [
+//     "Instagram y portafolio web",
+//     "LinkedIn y medios especializados",
+//     "Newsletter y YouTube educativo",
+//   ],
+//   "¿Qué tono de voz querés usar en la comunicación?": [
+//     "Amable y profesional",
+//     "Inspirador y empático",
+//     "Directo pero cálido",
+//   ],
+//   "¿Qué tipo de contenido creés que podríamos generar?": [
+//     "Detrás de escena del proceso",
+//     "Contenido educativo y reflexivo",
+//     "Galerías visuales del trabajo",
+//   ],
+//   "¿Qué frecuencia y estilo visual te gustaría tener en redes?": [
+//     "2 veces por semana, estilo sobrio y elegante",
+//     "Contenido mensual, estilo cálido y cercano",
+//     "Estilo visual disruptivo y artístico",
+//   ],
+//   "En los próximos 6 a 12 meses, ¿qué te gustaría lograr?": [
+//     "Lanzamiento oficial del estudio",
+//     "Primeros clientes satisfechos",
+//     "Portafolio sólido y coherente",
+//   ],
+//   "¿Qué obstáculos creés que tenemos que evitar desde el principio?": [
+//     "Desorden interno y mala comunicación",
+//     "Clientes sin afinidad con los valores del estudio",
+//     "Promesas no cumplidas o expectativas desalineadas",
+//   ],
+//   "¿Tenés material ya desarrollado?": [
+//     "Sí, tengo proyectos listos para mostrar",
+//     "Solo bocetos e ideas iniciales",
+//     "Nada aún, está en desarrollo",
+//   ],
+//   "¿Disponés de tiempo para grabar videos, hacer entrevistas o generar contenido con tu voz o rostro si es necesario?":
+//     [
+//       "Sí, estoy totalmente disponible",
+//       "Puedo organizarme ocasionalmente",
+//       "Prefiero delegarlo a otra persona",
+//     ],
+//   "¿Hay alguien más que vaya a participar en decisiones de marca o contenido?":
+//     [
+//       "Sí, familiares o socios estratégicos",
+//       "Solo yo decido todo",
+//       "Dependiendo del área, se consulta a otros",
+//     ],
+//   "Compartinos cuentas, sitios o imágenes que te inspiran.": [
+//     "Estudios de arquitectura internacionales",
+//     "Referentes de arte y diseño visual",
+//     "Proyectos locales con impacto social",
+//   ],
+//   "¿Tenés una paleta de colores o estilo gráfico que ya uses o te guste?": [
+//     "Sí, definida y en uso",
+//     "Estoy buscando una identidad visual",
+//     "No tengo nada definido todavía",
+//   ],
+//   "¿Cómo te imaginás que debería sentirse el sitio web al navegarlo?": [
+//     "Limpio y fácil de usar",
+//     "Inspirador y sensorial",
+//     "Rico en contenido y referencias",
+//   ],
+// };
 const questionOptions = {
-  "¿Qué te motivó a iniciar este estudio ahora, en este momento de tu vida profesional?":
-    [
-      "Búsqueda de independencia profesional",
-      "Proyecto familiar o legado",
-      "Momento de madurez creativa",
-    ],
-  "¿Qué legado o aporte te gustaría dejar en el rubro de la arquitectura?": [
-    "Innovación y sostenibilidad",
-    "Transformación urbana",
-    "Impacto social positivo",
+  // MOTIVACIÓN Y VISIÓN
+  "¿Qué te motivó a lanzar una marca de ropa para bebé?": [
+    "Tuve una experiencia personal como madre/padre",
+    "Noté un vacío en el mercado de diseño infantil",
+    "Siempre soñé con una marca propia en este rubro",
   ],
-  "¿Cómo definirías tu mirada personal sobre la arquitectura?": [
-    "Humanista y centrada en el usuario",
-    "Funcional y eficiente",
-    "Poética y conceptual",
+  "¿Qué querés que represente tu marca a nivel emocional?": [
+    "Amor y ternura",
+    "Confianza y calidad",
+    "Innovación con sensibilidad",
   ],
-  "¿Qué cosas no querés repetir de otras experiencias o estructuras tradicionales?":
-    [
-      "Burocracia excesiva",
-      "Relaciones jerárquicas rígidas",
-      "Desconexión con el cliente",
-    ],
-  "¿Cómo te imaginás el estudio dentro de 5 años?": [
-    "Estudio consolidado con equipo multidisciplinario",
-    "Proyectos internacionales en curso",
-    "Influencia reconocida en la comunidad",
+  "¿Qué valor diferencial querés ofrecer?": [
+    "Diseño único y hecho con cuidado",
+    "Prendas cómodas, seguras y sostenibles",
+    "Atención personalizada y conexión real",
   ],
-  "¿Qué servicios incluirá?": [
-    "Diseño arquitectónico",
-    "Consultoría y dirección de obra",
-    "Gestión de proyectos integrales",
+
+  // NAMING Y LOGO
+  "¿Qué estilo de nombre preferís para la marca?": [
+    "Dulce, simple y recordable",
+    "Abstracto y creativo",
+    "Inspirado en la naturaleza o lo espiritual",
   ],
-  "¿Querés tener alianzas con profesionales de otras disciplinas?": [
-    "Sí, con diseñadores y urbanistas",
-    "Solo alianzas estratégicas puntuales",
-    "No, prefiero un equipo interno completo",
+  "¿Qué tipo de logo te gustaría tener?": [
+    "Solo tipográfico (con una fuente especial)",
+    "Tipografía + ícono (isologotipo)",
+    "Un símbolo gráfico que represente ternura o infancia",
   ],
-  "¿Hay servicios que querés evitar o que ya no te interesan ofrecer?": [
-    "Remodelaciones menores",
-    "Servicios técnicos sin diseño",
-    "Asesorías sin involucramiento creativo",
+  "¿Qué elementos te gustaría que aparezcan en el logo?": [
+    "Animales suaves (conejos, osos, patitos)",
+    "Naturaleza (hojas, flores, lunas)",
+    "Trazos simples y minimalistas",
   ],
-  "¿Cuáles son los 3 valores más importantes que deben guiar el estudio?": [
-    "Compromiso, innovación y ética",
-    "Empatía, sustentabilidad y estética",
-    "Transparencia, calidad y responsabilidad social",
+  "¿Qué NO querés que tenga el logo?": [
+    "Colores chillones o fluorescentes",
+    "Estética rígida o seria",
+    "Tipografías difíciles de leer",
   ],
-  "¿Cuál es la relación ideal que te gustaría tener con los clientes?": [
-    "Colaborativa y horizontal",
-    "Basada en la confianza mutua",
-    "Didáctica y cercana",
+  "¿Dónde pensás aplicar el logo?": [
+    "Etiquetas textiles",
+    "Packaging y stickers",
+    "Web, redes y papelería",
   ],
-  "¿Hay alguna corriente filosófica, cultural o espiritual que influya en tu forma de trabajar o diseñar?":
-    [
-      "Minimalismo japonés",
-      "Arquitectura bioclimática",
-      "Espiritualidad cristiana o ancestral",
-    ],
-  "¿Cómo definís el éxito de un proyecto, más allá del resultado estético?": [
-    "Satisfacción del cliente y del usuario",
-    "Impacto positivo en el entorno",
-    "Proceso armónico y eficiente",
+
+  // PALETA Y ESTILO VISUAL
+  "¿Qué colores reflejan mejor tu marca?": [
+    "Tonos neutros (beige, arena, blanco)",
+    "Pasteles suaves (rosado, celeste, verde agua)",
+    "Colores tierra (terracota, mostaza, oliva)",
   ],
-  "¿Querés que el estudio tenga un nombre personal, conceptual o abstracto?": [
-    "Personal: ligado a mi nombre",
-    "Conceptual: ligado a una idea o valor",
-    "Abstracto: evocador y creativo",
+  "¿Qué estilo visual te inspira más?": [
+    "Nórdico y minimalista",
+    "Vintage y cálido",
+    "Colorido, suave y con texturas naturales",
   ],
-  "¿Qué emoción o sensación te gustaría que el nombre genere en quien lo escucha?":
-    ["Inspiración", "Confianza", "Curiosidad"],
-  "¿Querés que la marca tenga una carga poética o sea más técnica y directa?": [
-    "Poética y artística",
-    "Técnica y precisa",
-    "Equilibrada entre ambas",
+  "¿Qué sensación debería transmitir tu ecommerce al entrar?": [
+    "Cálida y confiable",
+    "Delicada y profesional",
+    "Limpia, rápida y sensorial",
   ],
-  "¿Cómo NO querés que sea la marca?": [
-    "Fría y corporativa",
-    "Superficial o sin profundidad",
-    "Demasiado rígida o formal",
+  "¿Qué tipo de tipografías preferís?": [
+    "Redondeadas y amigables",
+    "Manuscritas o script",
+    "Modernas y minimalistas",
   ],
-  "¿Qué tipo de personas o empresas te gustaría que contraten al estudio?": [
-    "Personas comprometidas con el diseño",
-    "Empresas con visión de futuro",
-    "Clientes abiertos a la innovación",
+
+  // WHATSAPP & AUTOMATIZACIÓN
+  "¿Cómo querés gestionar la comunicación por WhatsApp?": [
+    "Automatizada con mensajes predefinidos",
+    "Respuesta humana, pero con mensajes rápidos configurados",
+    "Mixto: automático al inicio y personalizado después",
   ],
-  "¿Cuáles son los principales dolores o desafíos que enfrentan tus futuros clientes al encarar un proyecto arquitectónico?":
-    [
-      "Falta de visión clara",
-      "Presupuesto limitado",
-      "Miedo a lo nuevo o no tradicional",
-    ],
-  "¿Cómo te gustaría que se sintieran durante y después de trabajar con vos?": [
-    "Acompañados y entendidos",
-    "Inspirados y satisfechos",
-    "Confiados y tranquilos",
+  "¿Querés enviar mensajes masivos desde una API?": [
+    "Sí, para lanzamientos y promos exclusivas",
+    "Sí, pero solo a clientes registrados",
+    "No, prefiero responder 1 a 1",
   ],
-  "¿Qué tipo de clientes preferís evitar o rechazar?": [
-    "Desorganizados y sin compromiso",
-    "Autoritarios y cerrados al diálogo",
-    "Interesados solo en lo barato y rápido",
+  "¿Qué mensajes automáticos querés enviar?": [
+    "Confirmación de pedido",
+    "Aviso de producto enviado",
+    "Recomendación según compra anterior",
   ],
-  "¿Qué sentís que vos o tu estudio van a ofrecer distinto a lo que ya hay en el mercado?":
-    [
-      "Mirada integral y personalizada",
-      "Procesos transparentes y colaborativos",
-      "Énfasis en diseño con propósito",
-    ],
-  "¿Qué cosas solés hacer diferente aunque el cliente no se entere?": [
-    "Documentación detallada y clara",
-    "Análisis profundo del contexto",
-    "Revisión constante con el equipo",
+  "¿Qué opciones te gustaría ofrecer por WhatsApp?": [
+    "Catálogo de productos",
+    "Formulario rápido de compra",
+    "Soporte postventa y cambios",
   ],
-  "¿Qué estudios competidores admirás o con quiénes te gustaría compararte?": [
-    "Estudios de referencia ética y estética",
-    "Competidores con fuerte presencia internacional",
-    "Pequeños estudios con gran impacto",
+  "¿Quién marcará manualmente los pedidos como enviados?": [
+    "Yo desde el dashboard",
+    "Un asistente logístico",
+    "Me gustaría automatizarlo más adelante",
   ],
-  "¿Qué canales querés que tenga el estudio?": [
-    "Instagram y portafolio web",
-    "LinkedIn y medios especializados",
-    "Newsletter y YouTube educativo",
+  "¿Cómo se actualizará el stock de productos?": [
+    "Se descuenta automáticamente por compra",
+    "Lo actualizo manualmente al final del día",
+    "Desde el panel por cada venta cerrada por WhatsApp",
   ],
-  "¿Qué tono de voz querés usar en la comunicación?": [
-    "Amable y profesional",
-    "Inspirador y empático",
-    "Directo pero cálido",
+
+  // SISTEMA DE GESTIÓN Y ESCALABILIDAD
+  "¿Cómo imaginás tu backend ideal?": [
+    "Panel donde vea pedidos, stock y ventas diarias",
+    "Dashboard con estadísticas y exportación",
+    "Algo simple para actualizar precios y ver pedidos",
   ],
-  "¿Qué tipo de contenido creés que podríamos generar?": [
-    "Detrás de escena del proceso",
-    "Contenido educativo y reflexivo",
-    "Galerías visuales del trabajo",
+  "¿Querés integrar herramientas de fidelización?": [
+    "Sí, club de puntos o acceso anticipado",
+    "Sí, pero algo muy simple (cupones o códigos)",
+    "No por ahora",
   ],
-  "¿Qué frecuencia y estilo visual te gustaría tener en redes?": [
-    "2 veces por semana, estilo sobrio y elegante",
-    "Contenido mensual, estilo cálido y cercano",
-    "Estilo visual disruptivo y artístico",
+  "¿Querés tener seguimiento de pedidos por parte del cliente?": [
+    "Sí, que puedan ver el estado del envío",
+    "Sí, pero desde WhatsApp",
+    "No, prefiero contacto directo por mensajes",
   ],
-  "En los próximos 6 a 12 meses, ¿qué te gustaría lograr?": [
-    "Lanzamiento oficial del estudio",
-    "Primeros clientes satisfechos",
-    "Portafolio sólido y coherente",
+
+  // REDES Y CONTENIDO
+  "¿Qué contenido visual te gustaría crear para redes?": [
+    "Fotos reales de bebés usando la ropa",
+    "Contenido lifestyle de maternidad",
+    "Videos cortos tipo reels mostrando procesos",
   ],
-  "¿Qué obstáculos creés que tenemos que evitar desde el principio?": [
-    "Desorden interno y mala comunicación",
-    "Clientes sin afinidad con los valores del estudio",
-    "Promesas no cumplidas o expectativas desalineadas",
+  "¿Qué tono de voz querés usar en redes?": [
+    "Cercano, dulce y auténtico",
+    "Profesional, pero empático",
+    "Creativo, pero simple y natural",
   ],
-  "¿Tenés material ya desarrollado?": [
-    "Sí, tengo proyectos listos para mostrar",
-    "Solo bocetos e ideas iniciales",
-    "Nada aún, está en desarrollo",
+  "¿Con qué frecuencia querés publicar contenido?": [
+    "3 veces por semana",
+    "Historias diarias y posts 2 veces por semana",
+    "Solo contenido de lanzamientos y novedades",
   ],
-  "¿Disponés de tiempo para grabar videos, hacer entrevistas o generar contenido con tu voz o rostro si es necesario?":
-    [
-      "Sí, estoy totalmente disponible",
-      "Puedo organizarme ocasionalmente",
-      "Prefiero delegarlo a otra persona",
-    ],
-  "¿Hay alguien más que vaya a participar en decisiones de marca o contenido?":
-    [
-      "Sí, familiares o socios estratégicos",
-      "Solo yo decido todo",
-      "Dependiendo del área, se consulta a otros",
-    ],
-  "Compartinos cuentas, sitios o imágenes que te inspiran.": [
-    "Estudios de arquitectura internacionales",
-    "Referentes de arte y diseño visual",
-    "Proyectos locales con impacto social",
+  "¿Querés incluir campañas segmentadas por edad o tipo de cliente?": [
+    "Sí, por edad del bebé",
+    "Sí, por regalo, mamá primeriza, etc.",
+    "No por ahora",
   ],
-  "¿Tenés una paleta de colores o estilo gráfico que ya uses o te guste?": [
-    "Sí, definida y en uso",
-    "Estoy buscando una identidad visual",
-    "No tengo nada definido todavía",
-  ],
-  "¿Cómo te imaginás que debería sentirse el sitio web al navegarlo?": [
-    "Limpio y fácil de usar",
-    "Inspirador y sensorial",
-    "Rico en contenido y referencias",
+  "¿Cómo imaginás la evolución de tu marca en 2-3 años?": [
+    "Una marca referente en el país",
+    "Expandirme a nuevos productos y accesorios",
+    "Vender en otros países desde la tienda actual",
   ],
 };
 

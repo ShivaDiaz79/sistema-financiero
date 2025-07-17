@@ -1,6 +1,7 @@
-// components/SistenPrueba.js
+"use client";
+
 import React, { useState } from 'react';
-import { firestore } from "@/utilss/firebase";
+import { firestore } from "@/utils/firebase";
 import { motion } from 'framer-motion';
 
 const SistenPrueba = () => {
